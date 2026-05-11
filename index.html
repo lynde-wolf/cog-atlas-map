@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cognitive Atlas — concept map</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="graph"></div>
+
+<aside id="panel">
+  <header>
+    <h1>Cognitive Atlas</h1>
+    <p class="sub">Concept map · colored by subject area</p>
+  </header>
+
+  <section class="search">
+    <input id="search" type="search" placeholder="Search concepts…" autocomplete="off" />
+    <ul id="suggest" hidden></ul>
+  </section>
+
+  <section id="legend">
+    <h2>Subject areas</h2>
+    <ul id="classes"></ul>
+    <h2>Relations</h2>
+    <ul id="rels">
+      <li><span class="swatch line solid"></span> has part (PARTOF)</li>
+      <li><span class="swatch line dashed"></span> has kind (KINDOF)</li>
+    </ul>
+  </section>
+
+  <section id="details" hidden>
+    <button id="close" aria-label="Close">×</button>
+    <h2 id="d-name"></h2>
+    <p id="d-class" class="muted"></p>
+    <p id="d-alias" class="muted"></p>
+    <p id="d-def"></p>
+    <p><a id="d-link" target="_blank" rel="noopener">View on cognitiveatlas.org →</a></p>
+  </section>
+</aside>
+
+<script src="https://unpkg.com/force-graph@1.43.5/dist/force-graph.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
