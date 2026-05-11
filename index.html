@@ -25,8 +25,8 @@
     <ul id="classes"></ul>
     <h2>Relations</h2>
     <ul id="rels">
-      <li><span class="swatch line solid"></span> has part (PARTOF)</li>
-      <li><span class="swatch line dashed"></span> has kind (KINDOF)</li>
+      <li data-rel="PARTOF"><span class="swatch line solid"></span> has part (PARTOF)</li>
+      <li data-rel="KINDOF"><span class="swatch line dashed"></span> has kind (KINDOF)</li>
     </ul>
   </section>
 
@@ -40,6 +40,7 @@
   </section>
 </aside>
 
+<script src="https://unpkg.com/d3-force@3"></script>
 <script src="https://unpkg.com/force-graph@1.43.5/dist/force-graph.min.js"></script>
 <script src="app.js"></script>
 </body>

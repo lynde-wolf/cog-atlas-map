@@ -24,6 +24,7 @@ const state = {
   incident: new Map(),          // id -> Set(linkIndex)
   classColors: new Map(),       // class_name -> hex
   hidden: new Set(),            // class names currently hidden
+  hiddenRels: new Set(),        // relationship types currently hidden
   highlight: null,              // {nodes:Set, links:Set} or null
   selected: null,
 };
@@ -76,6 +77,7 @@ function nodeVisible(n) {
 }
 
 function linkVisible(l) {
+  if (state.hiddenRels.has(l.type)) return false;
   const s = typeof l.source === "object" ? l.source : state.byId.get(l.source);
   const t = typeof l.target === "object" ? l.target : state.byId.get(l.target);
   return s && t && nodeVisible(s) && nodeVisible(t);
@@ -150,9 +152,14 @@ function initGraph() {
   resize();
   window.addEventListener("resize", resize);
 
-  // tweak forces a bit so the giant connected component spreads out
-  Graph.d3Force("charge").strength(-90);
-  Graph.d3Force("link").distance(40);
+  // Tame the layout: weaker repulsion + gentle centering pulls disconnected
+  // nodes in instead of letting them drift to infinity.
+  Graph.d3Force("charge").strength(-28).distanceMax(220);
+  Graph.d3Force("link").distance(28).strength(0.6);
+  Graph.d3Force("x", d3.forceX(0).strength(0.04));
+  Graph.d3Force("y", d3.forceY(0).strength(0.04));
+  // d3-force UMD exposes as `d3`; if it's missing, fall through (no extra centering).
+  Graph.d3ReheatSimulation();
 }
 
 function linkKey(l) {
@@ -186,6 +193,18 @@ function renderLegend() {
     });
     ul.appendChild(li);
   }
+}
+
+function setupRelToggle() {
+  document.querySelectorAll('#rels li[data-rel]').forEach(li => {
+    li.addEventListener('click', () => {
+      const rel = li.dataset.rel;
+      if (state.hiddenRels.has(rel)) state.hiddenRels.delete(rel);
+      else state.hiddenRels.add(rel);
+      li.classList.toggle('dim', state.hiddenRels.has(rel));
+      redraw();
+    });
+  });
 }
 
 function setupSearch() {
@@ -264,5 +283,6 @@ document.getElementById("close").addEventListener("click", hideDetails);
   }
   initGraph();
   renderLegend();
+  setupRelToggle();
   setupSearch();
 })();
