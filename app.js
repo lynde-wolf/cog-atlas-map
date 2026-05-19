@@ -126,6 +126,13 @@ function initGraph() {
     })
     .nodeCanvasObjectMode(() => "after")
     .nodeCanvasObject((n, ctx, scale) => {
+      if (n.pinned) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, nodeRadius(n) + 1.5, 0, 2 * Math.PI);
+        ctx.strokeStyle = "rgba(230,237,243,0.85)";
+        ctx.lineWidth = 1 / scale;
+        ctx.stroke();
+      }
       if (scale < 1.6 && !(state.highlight && state.highlight.nodes.has(n.id))) return;
       const fontSize = 11 / scale;
       ctx.font = `${fontSize}px -apple-system, sans-serif`;
@@ -157,7 +164,11 @@ function initGraph() {
       state.highlight = { nodes, links };
       redraw();
     })
-    .onNodeClick(n => showDetails(n))
+    .onNodeClick((n, e) => {
+      if (e && e.shiftKey) { n.fx = null; n.fy = null; n.pinned = false; redraw(); return; }
+      showDetails(n);
+    })
+    .onNodeDragEnd(n => { n.fx = n.x; n.fy = n.y; n.pinned = true; redraw(); })
     .onBackgroundClick(() => hideDetails())
     .d3AlphaDecay(0.025)
     .d3VelocityDecay(0.35)
